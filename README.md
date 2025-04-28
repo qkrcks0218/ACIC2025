@@ -3,6 +3,10 @@ Proximal Causal Inference
 Chan Park
 2025-05
 
+
+
+
+
 This demonstration will discuss inference of the average treatment
 effect and the natural direct and indirect effects using proximal causal
 inference.
@@ -53,22 +57,34 @@ RHC_data_reform <- RHC[,c("Y",D_ls,W_ls,Z_ls,X_ls)]  ## Only use relevant variab
 
 ### Proximal 2-stage regression procedure
 
-We consider the following linear models: $$
-E(Y|D,Z,U) =  \beta_0 +  \beta_D D +  \beta_U U
+We consider the following linear models:
+
+$$
+\begin{aligned}
+E(Y|D,Z,U) & = &  \beta_0 & +  \beta_D D & +  \beta_U U
 \\
-E(W|D,Z,U) = \gamma_0 +  \gamma_U U
-$$ where $\beta_D$ encodes the average treatment effect of $D$ on $Y$.
+E(W|D,Z,U) & = &  \gamma_0 &  &  +  \gamma_U U
+\end{aligned}
+$$
+
+where $\beta_D$ encodes the average treatment effect of $D$ on $Y$.
 
 TT et al. (2024, Stat. Sci.) and Liu et al. (2024, AJE) showed that a
 consistent estimator of $\beta_D$ can be obtained by the following
-2-stage regression procedure: $$
-1. \quad 
-\widehat{W} \quad \leftarrow \quad \texttt{lm}(W \sim D +Z+X)
+2-stage regression procedure:
+
+$$
+\begin{aligned}
+1. & &
+\widehat{W} & & \leftarrow &  & & \texttt{lm}(W \sim D +Z+X)
 \\
-2.  \quad 
-\widehat{\beta}_{D}  \quad \leftarrow  \quad  \texttt{coef}( \texttt{lm}(Y \sim D +\widehat{W}+X) )
+2. & &
+\widehat{\beta}_{D} &
+& \leftarrow & &  & \texttt{coef}( \texttt{lm}(Y \sim D +\widehat{W}+X) )
 \end{aligned}
-$$ This can be easily implemented using the `lm` function.
+$$
+
+This can be easily implemented using the `lm` function.
 
 ``` r
 ## concatenating variables to make formulas
@@ -135,7 +151,9 @@ summary(OLS)$coefficients[1:5,]
 
 ### Outcome confounding bridge function
 
-Recall that the outcome confounding bridge function $h$ satisfies $$
+Recall that the outcome confounding bridge function $h$ satisfies
+
+$$
 \begin{aligned}
 &
 E[h(D,W,X)|D,Z,X] = E[Y|D,Z,X]
@@ -145,14 +163,16 @@ E\Big[
 g_h(D,Z,X) \big\{ Y - h(D,W,X) \big\}
 \Big] = 0
 \end{aligned}
-$$ We will consider a linear $h$ and a linear $g_h$: $$
+$$
+
+We will consider a linear $h$ and a linear $g_h$:
+
+$$
 \begin{aligned}
 & h(D,W,X) = \theta_0 + \theta_D D + \theta_W^\intercal W + \theta_X^\intercal X
 \\
 & g_h(D,Z,X) = 
-\begin{bmatrix}
-1 \\ D \\ Z \\ X
-\end{bmatrix}
+[ 1, D, Z^\intercal, X^\intercal]^\intercal
 \in \mathbb{R}^{1+1+2+68}
 \end{aligned}
 $$
@@ -179,16 +199,12 @@ moment.h <- function(data,theta.h){
 Although these specifications can be changed, we keep them simple for
 demonstration purposes.
 
-The ATE is identified by $$
-\beta = E [ h(D=1,W,X) -h(D=0,W,X) ]
-$$ We consider a moment function $\Psi(O,\beta,\theta)$: $$
-\Psi(O,\beta,\theta)
-=
-\begin{bmatrix}
-h(1,W,X)-h(0,W,X) - \beta 
-\\
-g_h(D,Z,X) \big\{ Y - h(D,W,X; \theta) \big\}
-\end{bmatrix}
+The ATE is identified by $\beta = E [ h(D=1,W,X) -h(D=0,W,X) ]$.
+
+We consider a moment function $\Psi(O,\beta,\theta)$:
+
+$$
+\Psi(O,\beta,\theta) = \left[ \matrix{ h(1,W,X)-h(0,W,X) - \beta  \\ g_h(D,Z,X) \big\{ Y - h(D,W,X; \theta) \big\}} \right]
 $$
 
 ``` r
@@ -205,11 +221,15 @@ extended.moment <-                ## Psi function
   }
 ```
 
-Consider the solution to the moment equation $$
+Consider the solution to the moment equation
+
+$$
 (\widehat{\beta},\widehat{\theta})
 \quad \leftarrow \quad 
 \frac{1}{N} \sum_{i=1}^{N} \Psi(O_i , \beta,\theta) = 0
-$$ Note that $\widehat{\beta}$ is an ATE estimate.
+$$
+
+Note that $\widehat{\beta}$ is an ATE estimate.
 
 ``` r
 sum.extended.moment <-            ## average of Psi over the observations
