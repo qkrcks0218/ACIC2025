@@ -69,9 +69,12 @@ $$
 
 where $\beta_D$ encodes the average treatment effect of $D$ on $Y$.
 
-TT et al. (2024, Stat. Sci.) and Liu et al. (2024, AJE) showed that a
-consistent estimator of $\beta_D$ can be obtained by the following
-2-stage regression procedure:
+[TT et al. (2024, Stat.
+Sci.)](https://projecteuclid.org/journals/statistical-science/volume-39/issue-3/An-Introduction-to-Proximal-Causal-Inference/10.1214/23-STS911.short)
+and [Liu et al. (2024,
+AJE)](https://academic.oup.com/aje/advance-article/doi/10.1093/aje/kwae370/7775568)
+showed that a consistent estimator of $\beta_D$ can be obtained by the
+following 2-stage regression procedure:
 
 $$
 \begin{aligned} 1. \quad & \widehat{W} & \leftarrow &  \quad \texttt{lm}(W \sim D +Z+X) 
