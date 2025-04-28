@@ -35,6 +35,7 @@ W_ls <- c("ph1", "hema1")
 D_ls <- "RHC"
 X_ls <- colnames(RHC)[3:74]
 X_ls <- X_ls[! X_ls %in% c(D_ls,Z_ls,W_ls)]
+X_ls <- X_ls[1:3]
 nX <- length(X_ls)
 
 RHC_data_reform <- RHC[,c("Y",D_ls,W_ls,Z_ls,X_ls)]  ## Only use relevant variables
@@ -58,12 +59,12 @@ TT et al. (2024, Stat. Sci.) and Liu et al. (2024, AJE) showed that a consistent
 
 $$
 \begin{aligned}
-1. & &
-\widehat{W} & & \leftarrow &  & & \texttt{lm}(W \sim D +Z+X)
+1. \quad &
+\widehat{W} & \quad \leftarrow &  \quad \texttt{lm}(W \sim D +Z+X)
 \\
-2. & &
+2. \quad &
 \widehat{\beta}_{D} &
-& \leftarrow & &  & \texttt{coef}( \texttt{lm}(Y \sim D +\widehat{W}+X) )
+\quad \leftarrow & \quad \texttt{coef}( \texttt{lm}(Y \sim D +\widehat{W}+X) )
 \end{aligned}
 $$
 
@@ -115,7 +116,7 @@ E[h(D,W,X)|D,Z,X] = E[Y|D,Z,X]
 \\
 \Rightarrow \quad &
 E[ 
-g_h(D,Z,X) \big\{ Y - h(D,W,X) \big\}
+g_h(D,Z,X) \{ Y - h(D,W,X) \}
 ] = 0
 \end{aligned}
 $$
