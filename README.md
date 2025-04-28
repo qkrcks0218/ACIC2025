@@ -54,23 +54,19 @@ RHC_data_reform <- RHC[,c("Y",D_ls,W_ls,Z_ls,X_ls)]  ## Only use relevant variab
 ### Proximal 2-stage regression procedure
 
 We consider the following linear models: $$
-\begin{aligned}
-E(Y|D,Z,U) & = &  \beta_0 & +  \beta_D D & +  \beta_U U
+E(Y|D,Z,U) =  \beta_0 +  \beta_D D +  \beta_U U
 \\
-E(W|D,Z,U) & = &  \gamma_0 &  &  +  \gamma_U U
-\end{aligned}
+E(W|D,Z,U) = \gamma_0 +  \gamma_U U
 $$ where $\beta_D$ encodes the average treatment effect of $D$ on $Y$.
 
 TT et al. (2024, Stat. Sci.) and Liu et al. (2024, AJE) showed that a
 consistent estimator of $\beta_D$ can be obtained by the following
 2-stage regression procedure: $$
-\begin{aligned}
-1. & &
-\widehat{W} & & \leftarrow &  & & \texttt{lm}(W \sim D +Z+X)
+1. \quad 
+\widehat{W} \quad \leftarrow \quad \texttt{lm}(W \sim D +Z+X)
 \\
-2. & &
-\widehat{\beta}_{D} &
-& \leftarrow & &  & \texttt{coef}( \texttt{lm}(Y \sim D +\widehat{W}+X) )
+2.  \quad 
+\widehat{\beta}_{D}  \quad \leftarrow  \quad  \texttt{coef}( \texttt{lm}(Y \sim D +\widehat{W}+X) )
 \end{aligned}
 $$ This can be easily implemented using the `lm` function.
 
