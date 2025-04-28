@@ -8,9 +8,9 @@ header-includes:
  - \usepackage{amssymb}
 ---
 
-This demonstration will discuss inference of the average treatment effect and the natural direct and indirect effects using proximal causal inference.
+This demonstration is about identification and estimation of the average treatment effect using proximal causal inference.
 
-## Inference of the Average Treatment Effect (ATE)
+## Proximal Identification and Estimation of the Average Treatment Effect (ATE)
 
 ### Dataset
 
@@ -22,7 +22,7 @@ We use the Study to Understand Prognoses Preferences Outcomes and Risks of Treat
 - $W$: \  `ph1`, `hema1`
 - $X$: \ \ \ Other 68 variables (age, sex, weight, medical history, etc.)
 
-The outcome variable $Y$ can be obtained from `rhc` dataset in `Hmisc` library. The other variables are available from `RHC` dataset in `ATbounds` library.
+The outcome variable $Y$ can be obtained from `rhc` dataset in `Hmisc` library. The other variables are available from `RHC` dataset in `ATbounds` library. See [this website](https://hbiostat.org/data/repo/rhc.html) for details on the dataset.
 
 ```{r dataprep}
 library(Hmisc)
@@ -54,7 +54,7 @@ $$
 
 where $\beta_D$ encodes the average treatment effect of $D$ on $Y$. 
 
-[TT et al. (2024, Stat. Sci.)](https://projecteuclid.org/journals/statistical-science/volume-39/issue-3/An-Introduction-to-Proximal-Causal-Inference/10.1214/23-STS911.short) and [Liu et al. (2024, AJE)](https://academic.oup.com/aje/advance-article/doi/10.1093/aje/kwae370/7775568) showed that a consistent estimator of $\beta_D$ can be obtained by the following 2-stage regression procedure:
+[Tchetgen Tchetgen et al. (2024, Stat. Sci.)](https://projecteuclid.org/journals/statistical-science/volume-39/issue-3/An-Introduction-to-Proximal-Causal-Inference/10.1214/23-STS911.short) and [Liu et al. (2024, AJE)](https://academic.oup.com/aje/advance-article/doi/10.1093/aje/kwae370/7775568) showed that a consistent estimator of $\beta_D$ can be obtained by the following 2-stage regression procedure:
 
 $$
 \begin{aligned} 1. \quad & \widehat{W} & \leftarrow &  \quad \texttt{lm}(W \sim D +Z+X) 
@@ -203,7 +203,7 @@ cbind(Moment.Equation$par[1+1:5],
 ```
 Since $h(D=1,W,X)-h(D=0,W,X) = \theta_D$ under the linear $h$, we find the coefficients of RHC is equal to the ATE estimate.
 
-A corresponding variance estimator can also be constructed. The result is similar to that using `ivreg`.
+A corresponding variance estimator can also be constructed; we refer the readers to [Stefanski and Boos (2002, The Amer. Stat.)](https://www.jstor.org/stable/3087324) for details. 
 ```{r avar}
 AVAR <- function(data,theta.extended,extended.moment){
   
@@ -245,10 +245,12 @@ RESULT
 
 ```
 
+The result is similar to that using `ivreg`.
 
 ## Reference
 
-TT et al. (2024) An Introduction to Proximal Causal Inference. _Statistical Science_
+Tchetgen Tchetgen et al. (2024) An Introduction to Proximal Causal Inference. _Statistical Science_.
 
-Liu, Park, Li, TT (2024). Regression-Based Proximal Causal Inference. _Am J Epi_
+Liu, Park, Li, Tchetgen Tchetgen (2024). Regression-Based Proximal Causal Inference. _Am J Epi_.
 
+Stefanski, Boos (2002). The Calculus of M-Estimation. _The American Statistician_.

@@ -7,11 +7,10 @@ Chan Park
 
 
 
-This demonstration will discuss inference of the average treatment
-effect and the natural direct and indirect effects using proximal causal
-inference.
+This demonstration is about identification and estimation of the average
+treatment effect using proximal causal inference.
 
-## Inference of the Average Treatment Effect (ATE)
+## Proximal Identification and Estimation of the Average Treatment Effect (ATE)
 
 ### Dataset
 
@@ -27,7 +26,9 @@ are listed below.
 
 The outcome variable $Y$ can be obtained from `rhc` dataset in `Hmisc`
 library. The other variables are available from `RHC` dataset in
-`ATbounds` library.
+`ATbounds` library. See [this
+website](https://hbiostat.org/data/repo/rhc.html) for details on the
+dataset.
 
 ``` r
 library(Hmisc)
@@ -69,7 +70,7 @@ $$
 
 where $\beta_D$ encodes the average treatment effect of $D$ on $Y$.
 
-[TT et al. (2024, Stat.
+[Tchetgen Tchetgen et al. (2024, Stat.
 Sci.)](https://projecteuclid.org/journals/statistical-science/volume-39/issue-3/An-Introduction-to-Proximal-Causal-Inference/10.1214/23-STS911.short)
 and [Liu et al. (2024,
 AJE)](https://academic.oup.com/aje/advance-article/doi/10.1093/aje/kwae370/7775568)
@@ -266,8 +267,9 @@ cbind(Moment.Equation$par[1+1:5],
 Since $h(D=1,W,X)-h(D=0,W,X) = \theta_D$ under the linear $h$, we find
 the coefficients of RHC is equal to the ATE estimate.
 
-A corresponding variance estimator can also be constructed. The result
-is similar to that using `ivreg`.
+A corresponding variance estimator can also be constructed; we refer the
+readers to [Stefanski and Boos (2002, The Amer.
+Stat.)](https://www.jstor.org/stable/3087324) for details.
 
 ``` r
 AVAR <- function(data,theta.extended,extended.moment){
@@ -315,10 +317,15 @@ RESULT
     ## 95% CI LB -3.0009881 -2.9821850
     ## 95% CI UB -0.9852940 -1.0040972
 
+The result is similar to that using `ivreg`.
+
 ## Reference
 
-TT et al. (2024) An Introduction to Proximal Causal Inference.
-*Statistical Science*
+Tchetgen Tchetgen et al. (2024) An Introduction to Proximal Causal
+Inference. *Statistical Science*.
 
-Liu, Park, Li, TT (2024). Regression-Based Proximal Causal Inference.
-*Am J Epi*
+Liu, Park, Li, Tchetgen Tchetgen (2024). Regression-Based Proximal
+Causal Inference. *Am J Epi*.
+
+Stefanski, Boos (2002). The Calculus of M-Estimation. *The American
+Statistician*.
