@@ -75,20 +75,10 @@ consistent estimator of $\beta_D$ can be obtained by the following
 2-stage regression procedure:
 
 $$
-\begin{aligned}
-E(Y|D,Z,U) & = &  \beta_0 & +  \beta_D D & +  \beta_U U
-\\
-E(W|D,Z,U) & = &  \gamma_0 &  &  +  \gamma_U U
-\end{aligned}
+\begin{aligned} 1. \quad & \widehat{W} & \leftarrow &  \quad \texttt{lm}(W \sim D +Z+X) \\ 2. \quad &  \widehat{\beta}_{D} & \leftarrow & \quad \texttt{coef}( \texttt{lm}(Y \sim D +\widehat{W}+X) ) \end{aligned}
 $$
 
-$$
-\begin{aligned}
-1. W & d &  a
-\\
-2. a & b &  c
-\end{aligned}
-$$ This can be easily implemented using the `lm` function.
+This can be easily implemented using the `lm` function.
 
 ``` r
 ## concatenating variables to make formulas
