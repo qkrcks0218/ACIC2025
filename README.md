@@ -167,8 +167,13 @@ $$
 \begin{aligned}
 & h(D,W,X) = \theta_0 + \theta_D D + \theta_W^\intercal W + \theta_X^\intercal X
 \\
-& g_h(D,Z,X) = 
-[ 1, D, Z^\intercal, X^\intercal]^\intercal
+& g_h(D,Z,X) = \left[ \matrix{1
+\\ 
+D
+\\
+Z
+\\
+X} \right]
 \in \mathbb{R}^{1+1+2+68}
 \end{aligned}
 $$
