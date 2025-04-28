@@ -76,9 +76,9 @@ consistent estimator of $\beta_D$ can be obtained by the following
 
 $$
 \begin{aligned}
-1. \widehat{W} & \leftarrow &  lm(W \sim D +Z+X)
+1. W & d &  a
 \\
-2. \widehat{\beta}_{D} & \leftarrow &  coef( lm(Y \sim D +\widehat{W}+X) )
+2. a & b &  c
 \end{aligned}
 $$ This can be easily implemented using the `lm` function.
 

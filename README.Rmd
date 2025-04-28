@@ -59,9 +59,9 @@ TT et al. (2024, Stat. Sci.) and Liu et al. (2024, AJE) showed that a consistent
 
 $$
 \begin{aligned}
-1. \widehat{W} & \leftarrow &  lm(W \sim D +Z+X)
+1. W & d &  a
 \\
-2. \widehat{\beta}_{D} & \leftarrow &  coef( lm(Y \sim D +\widehat{W}+X) )
+2. a & b &  c
 \end{aligned}
 $$
 This can be easily implemented using the `lm` function.
