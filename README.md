@@ -236,8 +236,10 @@ $$
 (\widehat{\beta},\widehat{\theta})
 \quad \leftarrow \quad 
 \frac{1}{N} \sum_{i=1}^{N} \Psi(O_i , \beta,\theta) = 0
-$$ where $\widehat{\beta}$ is an ATE estimate. The moment equation can
-be solved by the off-the-shelf optimization function `optim`.
+$$
+
+where $\widehat{\beta}$ is an ATE estimate. The moment equation can be
+solved by the off-the-shelf optimization function `optim`.
 
 ``` r
 sum.extended.moment <-            ## average of Psi over the observations
