@@ -1,4 +1,4 @@
-Proximal Causal Inference
+ACIC2025 Short Course: Proximal Causal Inference
 ================
 Chan Park
 2025-05
@@ -7,8 +7,9 @@ Chan Park
 
 
 
-This demonstration is about identification and estimation of the average
-treatment effect using proximal causal inference.
+This document is part of the ACIC2025 short course and demonstrates the
+identification and estimation of the average treatment effect using
+proximal causal inference.
 
 ## Proximal Identification and Estimation of the Average Treatment Effect (ATE)
 
@@ -205,6 +206,8 @@ demonstration purposes.
 
 The ATE is identified by $\beta = E [ h(D=1,W,X) -h(D=0,W,X) ]$.
 
+### Estimation of the ATE using the outcome confounding bridge function
+
 We consider a moment function $\Psi(O,\beta,\theta)$:
 
 $$
@@ -233,9 +236,8 @@ $$
 (\widehat{\beta},\widehat{\theta})
 \quad \leftarrow \quad 
 \frac{1}{N} \sum_{i=1}^{N} \Psi(O_i , \beta,\theta) = 0
-$$
-
-Note that $\widehat{\beta}$ is an ATE estimate.
+$$ where $\widehat{\beta}$ is an ATE estimate. The moment equation can
+be solved by the off-the-shelf optimization function `optim`.
 
 ``` r
 sum.extended.moment <-            ## average of Psi over the observations

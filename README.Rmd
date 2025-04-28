@@ -1,5 +1,5 @@
 ---
-title: "Proximal Causal Inference"
+title: "ACIC2025 Short Course: Proximal Causal Inference"
 author: "Chan Park"
 date: "2025-05"
 output: github_document
@@ -8,7 +8,7 @@ header-includes:
  - \usepackage{amssymb}
 ---
 
-This demonstration is about identification and estimation of the average treatment effect using proximal causal inference.
+This document is part of the ACIC2025 short course and demonstrates the identification and estimation of the average treatment effect using proximal causal inference.
 
 ## Proximal Identification and Estimation of the Average Treatment Effect (ATE)
 
@@ -155,6 +155,8 @@ Although these specifications can be changed, we keep them simple for demonstrat
 
 The ATE is identified by $\beta = E [ h(D=1,W,X) -h(D=0,W,X) ]$.
 
+### Estimation of the ATE using the outcome confounding bridge function
+
 We consider a moment function $\Psi(O,\beta,\theta)$:
  
 $$
@@ -183,8 +185,7 @@ $$
 \quad \leftarrow \quad 
 \frac{1}{N} \sum_{i=1}^{N} \Psi(O_i , \beta,\theta) = 0
 $$
-
-Note that $\widehat{\beta}$ is an ATE estimate. 
+where $\widehat{\beta}$ is an ATE estimate. The moment equation can be solved by the off-the-shelf optimization function `optim`.
 
 ```{r MM}
 sum.extended.moment <-            ## average of Psi over the observations
