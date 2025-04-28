@@ -76,6 +76,14 @@ consistent estimator of $\beta_D$ can be obtained by the following
 
 $$
 \begin{aligned}
+E(Y|D,Z,U) & = &  \beta_0 & +  \beta_D D & +  \beta_U U
+\\
+E(W|D,Z,U) & = &  \gamma_0 &  &  +  \gamma_U U
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
 1. W & d &  a
 \\
 2. a & b &  c
