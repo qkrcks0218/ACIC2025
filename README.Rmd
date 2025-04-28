@@ -35,7 +35,6 @@ W_ls <- c("ph1", "hema1")
 D_ls <- "RHC"
 X_ls <- colnames(RHC)[3:74]
 X_ls <- X_ls[! X_ls %in% c(D_ls,Z_ls,W_ls)]
-X_ls <- X_ls[1:3]
 nX <- length(X_ls)
 
 RHC_data_reform <- RHC[,c("Y",D_ls,W_ls,Z_ls,X_ls)]  ## Only use relevant variables
@@ -247,7 +246,9 @@ RESULT
 ```
 
 
+## Reference
 
+TT et al. (2024) An Introduction to Proximal Causal Inference. _Statistical Science_
 
-
+Liu, Park, Li, TT (2024). Regression-Based Proximal Causal Inference. _Am J Epi_
 
