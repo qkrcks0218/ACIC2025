@@ -200,7 +200,9 @@ The ATE is identified by $\beta = E [ h(D=1,W,X) -h(D=0,W,X) ]$.
 We consider a moment function $\Psi(O,\beta,\theta)$:
 
 $$
-\Psi(O,\beta,\theta) = \left[ \matrix{ h(1,W,X)-h(0,W,X) - \beta  \\ g_h(D,Z,X) \{ Y - h(D,W,X; \theta) \}} \right]
+\Psi(O,\beta,\theta) = \left[ \matrix{ h(1,W,X)-h(0,W,X) - \beta  
+\\ 
+g_h(D,Z,X) \{ Y - h(D,W,X; \theta) \}} \right]
 $$
 
 ``` r
