@@ -75,7 +75,9 @@ consistent estimator of $\beta_D$ can be obtained by the following
 2-stage regression procedure:
 
 $$
-\begin{aligned} 1. \quad & \widehat{W} & \leftarrow &  \quad \texttt{lm}(W \sim D +Z+X) \\ 2. \quad &  \widehat{\beta}_{D} & \leftarrow & \quad \texttt{coef}( \texttt{lm}(Y \sim D +\widehat{W}+X) ) \end{aligned}
+\begin{aligned} 1. \quad & \widehat{W} & \leftarrow &  \quad \texttt{lm}(W \sim D +Z+X) 
+\\ 
+2. \quad &  \widehat{\beta}_{D} & \leftarrow & \quad \texttt{coef}( \texttt{lm}(Y \sim D +\widehat{W}+X) ) \end{aligned}
 $$
 
 This can be easily implemented using the `lm` function.
