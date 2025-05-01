@@ -110,7 +110,7 @@ E[h(D,W,X)|D,Z,X] = E[Y|D,Z,X]
 \\
 \Rightarrow \quad &
 E[ 
-g_h(D,Z,X) \{ Y - h(D,W,X) \}
+g_h(D,Z,X) ( Y - h(D,W,X) )
 ] = 0
 \end{aligned}
 $$
@@ -160,9 +160,9 @@ The ATE is identified by $\beta = E [ h(D=1,W,X) -h(D=0,W,X) ]$.
 We consider a moment function $\Psi(O,\beta,\theta)$:
  
 $$
-\Psi(O,\beta,\theta) = \left[ \matrix{ h(1,W,X)-h(0,W,X) - \beta  
+\Psi(O,\beta,\theta) = \left[ \matrix{ h(1,W,X; \theta)-h(0,W,X; \theta) - \beta  
 \\ 
-g_h(D,Z,X) \{ Y - h(D,W,X; \theta) \}} \right]
+g_h(D,Z,X) ( Y - h(D,W,X; \theta) ) } \right]
 $$
 ```{r moment ft}
 extended.moment <-                ## Psi function
