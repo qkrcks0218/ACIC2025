@@ -79,7 +79,7 @@ RHC_data_reform_WfitAdd$W.fit <- predict(W.fit)
 ## 2st stage
 Y.fit <- lm(as.formula(paste("Y~RHC+W.fit+",X)), data=RHC_data_reform_WfitAdd)
 
-summary(Y.fit)$coefficients[1:5,]
+round(summary(Y.fit)$coefficients[1:5,],3)
 ```
 Unfortunately, the reported standard error (SE) is typically smaller than the true SE, as it does not account for the variability from the first-stage regression.
 
@@ -89,14 +89,14 @@ In fact, a one-line implementation is possible using the `ivreg::ivreg` function
 IVReg <- ivreg::ivreg(as.formula(paste("Y~RHC+ph1+hema1+",X,"|",
                                        paste0(Z,"+RHC+",X,collapse = "+"))),
                       data=RHC_data_reform)
-summary(IVReg)$coefficients[1:5,]
+round(summary(IVReg)$coefficients[1:5,],3)
 ```
 
 The effect estimate of -1.99 is statistically significant at the 5% level, indicating that RHC reduces survival time. In comparison, the OLS estimate is smaller than that obtained from the two-stage proximal regression procedure.
 
 ```{r ols}
 OLS <- lm(as.formula(paste("Y~RHC+",W,"+",Z,"+",X)), data=RHC_data_reform)
-summary(OLS)$coefficients[1:5,]
+round(summary(OLS)$coefficients[1:5,],3)
 ```
 
 ### Outcome confounding bridge function
@@ -158,7 +158,7 @@ The ATE is identified by $\beta = E [ h(D=1,W,X) -h(D=0,W,X) ]$.
 ### Estimation of the ATE using the outcome confounding bridge function
 
 We consider a moment function $\Psi(O,\beta,\theta)$:
- 
+
 $$
 \Psi(O,\beta,\theta) = \left[ \matrix{ h(1,W,X; \theta)-h(0,W,X; \theta) - \beta  
 \\ 
@@ -200,8 +200,8 @@ Moment.Equation <-                ## Find the solutions of the moment equation
 
 Moment.Equation$par[1]           ## ATE 
 
-cbind(Moment.Equation$par[1+1:5],
-      IVReg$coefficients[1:5])   ## (ATE,coef,RHC,ph1,hema1,age)
+round(cbind(Moment.Equation$par[1+1:5],
+            IVReg$coefficients[1:5]),3)   ## (ATE,coef,RHC,ph1,hema1,age)
 ```
 Since $h(D=1,W,X)-h(D=0,W,X) = \theta_D$ under the linear $h$, we find the coefficients of RHC is equal to the ATE estimate.
 
@@ -243,7 +243,7 @@ RESULT <- cbind(c(Moment.Equation$par[1], sqrt(Avar[1,1]),
 
 colnames(RESULT) <- c("Bridge Ft","2SLS")
 rownames(RESULT)  <- c("Est","SE","95% CI LB","95% CI UB")
-RESULT
+round(RESULT,3)
 
 ```
 

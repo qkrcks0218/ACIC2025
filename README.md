@@ -101,15 +101,15 @@ RHC_data_reform_WfitAdd$W.fit <- predict(W.fit)
 ## 2st stage
 Y.fit <- lm(as.formula(paste("Y~RHC+W.fit+",X)), data=RHC_data_reform_WfitAdd)
 
-summary(Y.fit)$coefficients[1:5,]
+round(summary(Y.fit)$coefficients[1:5,],3)
 ```
 
-    ##                 Estimate  Std. Error   t value     Pr(>|t|)
-    ## (Intercept) 156.24019359 57.44375771  2.719881 6.550466e-03
-    ## RHC          -1.99314108  0.37796646 -5.273328 1.389440e-07
-    ## W.fitph1    -18.41544172  7.52248014 -2.448055 1.439313e-02
-    ## W.fithema1   -1.15908980  0.59952519 -1.933346 5.324334e-02
-    ## age           0.05314342  0.03452365  1.539334 1.237788e-01
+    ##             Estimate Std. Error t value Pr(>|t|)
+    ## (Intercept)  156.240     57.444   2.720    0.007
+    ## RHC           -1.993      0.378  -5.273    0.000
+    ## W.fitph1     -18.415      7.522  -2.448    0.014
+    ## W.fithema1    -1.159      0.600  -1.933    0.053
+    ## age            0.053      0.035   1.539    0.124
 
 Unfortunately, the reported standard error (SE) is typically smaller
 than the true SE, as it does not account for the variability from the
@@ -122,15 +122,15 @@ function, which also provides a valid SE.
 IVReg <- ivreg::ivreg(as.formula(paste("Y~RHC+ph1+hema1+",X,"|",
                                        paste0(Z,"+RHC+",X,collapse = "+"))),
                       data=RHC_data_reform)
-summary(IVReg)$coefficients[1:5,]
+round(summary(IVReg)$coefficients[1:5,],3)
 ```
 
-    ##                 Estimate  Std. Error   t value     Pr(>|t|)
-    ## (Intercept) 156.24019359 76.69182462  2.037247 4.167169e-02
-    ## RHC          -1.99314108  0.50461422 -3.949831 7.915611e-05
-    ## ph1         -18.41544172 10.04308824 -1.833643 6.675941e-02
-    ## hema1        -1.15908980  0.80041214 -1.448116 1.476399e-01
-    ## age           0.05314342  0.04609172  1.152993 2.489621e-01
+    ##             Estimate Std. Error t value Pr(>|t|)
+    ## (Intercept)  156.240     76.692   2.037    0.042
+    ## RHC           -1.993      0.505  -3.950    0.000
+    ## ph1          -18.415     10.043  -1.834    0.067
+    ## hema1         -1.159      0.800  -1.448    0.148
+    ## age            0.053      0.046   1.153    0.249
 
 The effect estimate of -1.99 is statistically significant at the 5%
 level, indicating that RHC reduces survival time. In comparison, the OLS
@@ -139,15 +139,15 @@ regression procedure.
 
 ``` r
 OLS <- lm(as.formula(paste("Y~RHC+",W,"+",Z,"+",X)), data=RHC_data_reform)
-summary(OLS)$coefficients[1:5,]
+round(summary(OLS)$coefficients[1:5,],3)
 ```
 
-    ##                 Estimate   Std. Error    t value     Pr(>|t|)
-    ## (Intercept) -9.873021982 11.659335728 -0.8467911 3.971474e-01
-    ## RHC         -1.326837888  0.283105483 -4.6867262 2.841134e-06
-    ## ph1          3.323119542  1.446673158  2.2970769 2.165071e-02
-    ## hema1       -0.030746971  0.017362840 -1.7708492 7.663959e-02
-    ## pafi1        0.002696037  0.001231942  2.1884448 2.867794e-02
+    ##             Estimate Std. Error t value Pr(>|t|)
+    ## (Intercept)   -9.873     11.659  -0.847    0.397
+    ## RHC           -1.327      0.283  -4.687    0.000
+    ## ph1            3.323      1.447   2.297    0.022
+    ## hema1         -0.031      0.017  -1.771    0.077
+    ## pafi1          0.003      0.001   2.188    0.029
 
 ### Outcome confounding bridge function
 
@@ -257,16 +257,16 @@ Moment.Equation$par[1]           ## ATE
     ## [1] -1.993141
 
 ``` r
-cbind(Moment.Equation$par[1+1:5],
-      IVReg$coefficients[1:5])   ## (ATE,coef,RHC,ph1,hema1,age)
+round(cbind(Moment.Equation$par[1+1:5],
+            IVReg$coefficients[1:5]),3)   ## (ATE,coef,RHC,ph1,hema1,age)
 ```
 
-    ##                     [,1]         [,2]
-    ## (Intercept) 156.24019359 156.24019359
-    ## RHC          -1.99314108  -1.99314108
-    ## ph1         -18.41544172 -18.41544172
-    ## hema1        -1.15908980  -1.15908980
-    ## age           0.05314342   0.05314342
+    ##                [,1]    [,2]
+    ## (Intercept) 156.240 156.240
+    ## RHC          -1.993  -1.993
+    ## ph1         -18.415 -18.415
+    ## hema1        -1.159  -1.159
+    ## age           0.053   0.053
 
 Since $h(D=1,W,X)-h(D=0,W,X) = \theta_D$ under the linear $h$, we find
 the coefficients of RHC is equal to the ATE estimate.
@@ -312,14 +312,14 @@ RESULT <- cbind(c(Moment.Equation$par[1], sqrt(Avar[1,1]),
 
 colnames(RESULT) <- c("Bridge Ft","2SLS")
 rownames(RESULT)  <- c("Est","SE","95% CI LB","95% CI UB")
-RESULT
+round(RESULT,3)
 ```
 
-    ##            Bridge Ft       2SLS
-    ## Est       -1.9931411 -1.9931411
-    ## SE         0.5142077  0.5046142
-    ## 95% CI LB -3.0009881 -2.9821850
-    ## 95% CI UB -0.9852940 -1.0040972
+    ##           Bridge Ft   2SLS
+    ## Est          -1.993 -1.993
+    ## SE            0.514  0.505
+    ## 95% CI LB    -3.001 -2.982
+    ## 95% CI UB    -0.985 -1.004
 
 The result is similar to that using `ivreg`.
 
