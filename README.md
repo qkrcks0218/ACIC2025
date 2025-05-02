@@ -251,6 +251,21 @@ $$
 g_h(D,Z,X) ( Y - h(D,W,X; \theta) ) } \right]
 $$
 
+Note that the solution to the population moment equation
+$E[\Psi(O,\beta,\theta)]=0$ will recover the ATE $(=\beta)$ and the
+outcome confounding bridge function parameters $(=\theta)$. Therefore,
+estimators of $\beta$ and $\theta$ can be constructed as a solution to
+the moment equation based on the observed data:
+
+$$
+(\widehat{\beta},\widehat{\theta})
+\quad \leftarrow \quad 
+\frac{1}{N} \sum_{i=1}^{N} \Psi(O_i , \beta,\theta) = 0
+$$
+
+The moment equation can be solved by the off-the-shelf optimization
+function `optim`.
+
 ``` r
 extended.moment <-                ## Psi function
   function(data,theta.extended){    
@@ -263,21 +278,8 @@ extended.moment <-                ## Psi function
     cbind( h(data1,theta.h)-h(data0,theta.h)-theta.ate,
            moment.h(data,theta.h) )
   }
-```
 
-Consider the solution to the moment equation
-
-$$
-(\widehat{\beta},\widehat{\theta})
-\quad \leftarrow \quad 
-\frac{1}{N} \sum_{i=1}^{N} \Psi(O_i , \beta,\theta) = 0
-$$
-
-where $\widehat{\beta}$ is an ATE estimate. The moment equation can be
-solved by the off-the-shelf optimization function `optim`.
-
-``` r
-sum.extended.moment <-            ## average of Psi over the observations
+sum.extended.moment <-            ## (average of Psi over the observations)^2
   function(data,theta.extended){
     sum(apply(extended.moment(data,theta.extended),2,mean)^2)
   }
