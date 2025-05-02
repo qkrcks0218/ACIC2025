@@ -53,7 +53,20 @@ X_ls <- X_ls[! X_ls %in% c(D_ls,Z_ls,W_ls)]
 nX <- length(X_ls)
 
 RHC_data_reform <- RHC[,c("Y",D_ls,W_ls,Z_ls,X_ls)]  ## Only use relevant variables
+round(RHC_data_reform[1:10,1:10],3)
 ```
+
+    ##     Y RHC   ph1  hema1   pafi1 paco21    age    edu cardiohx chfhx
+    ## 1  30   0 7.359 58.000  68.000     40 70.251 12.000        0     0
+    ## 2  30   1 7.329 32.500 218.312     34 78.179 12.000        1     1
+    ## 3  30   1 7.359 21.098 275.500     16 46.092 14.070        0     0
+    ## 4  30   0 7.460 26.297 156.656     30 75.332  9.000        0     0
+    ## 5   1   1 7.229 24.000 478.000     17 67.910  9.945        0     0
+    ## 6  30   0 7.300 30.500 184.188     68 86.078  8.000        0     1
+    ## 7  30   0 7.380 29.000 148.750     45 54.968 14.000        0     0
+    ## 8  30   0 7.560 33.594 240.000     26 43.639 12.000        0     0
+    ## 9  30   0 7.400 18.898 333.312     40 18.042 12.822        0     0
+    ## 10 30   1 7.350 32.695  68.000     30 48.424 11.041        0     0
 
 ### Proximal 2-stage regression procedure
 
@@ -91,7 +104,7 @@ W <- paste0(W_ls,collapse ="+")
 X <- paste0(X_ls,collapse ="+")
 
 ## 1st stage
-W.fit <- lm(as.formula(paste("cbind(ph1,hema1)~RHC+",paste0(Z,"+",X,collapse = "+"))),
+W.fit <- lm(as.formula(paste("cbind(ph1,hema1)~RHC+",Z,"+",X)),
             data=RHC_data_reform)
 RHC_data_reform_WfitAdd <- RHC_data_reform
 RHC_data_reform_WfitAdd$W.fit <- predict(W.fit) 
@@ -117,8 +130,8 @@ In fact, a one-line implementation is possible using the `ivreg::ivreg`
 function, which also provides a valid SE.
 
 ``` r
-IVReg <- ivreg::ivreg(as.formula(paste("Y~RHC+ph1+hema1+",X,"|",
-                                       paste0(Z,"+RHC+",X,collapse = "+"))),
+## ivreg(Y~D+W+X|D+Z+X,data)
+IVReg <- ivreg::ivreg(as.formula(paste("Y~RHC+ph1+hema1+",X,"|","RHC+",Z,"+",X)),
                       data=RHC_data_reform)
 round(summary(IVReg)$coefficients[1:5,],3)
 ```
@@ -130,12 +143,32 @@ round(summary(IVReg)$coefficients[1:5,],3)
     ## hema1         -1.159      0.800  -1.448    0.148
     ## age            0.053      0.046   1.153    0.249
 
-The effect estimate of -1.99 is statistically significant at the 5%
-level, indicating that RHC reduces survival time. In comparison, the OLS
-estimate is smaller than that obtained from the two-stage proximal
-regression procedure.
+Another one-line implementation is available using the `gmm::gmm`
+function:
 
 ``` r
+## gmm(Y~D+W+X,~D+Z+X,data)
+GMM <- gmm::gmm(as.formula(paste("Y~RHC+ph1+hema1+",X)),
+                  as.formula(paste("~RHC+",Z,"+",X)),
+                      data=RHC_data_reform)
+round(summary(GMM)$coefficients[1:5,],3)
+```
+
+    ##             Estimate Std. Error t value Pr(>|t|)
+    ## (Intercept)  156.240     80.354   1.944    0.052
+    ## RHC           -1.993      0.503  -3.961    0.000
+    ## ph1          -18.415     10.535  -1.748    0.080
+    ## hema1         -1.159      0.835  -1.388    0.165
+    ## age            0.053      0.047   1.125    0.261
+
+The effect estimate of -1.99 is statistically significant at the 5%
+level, indicating that RHC reduces survival time.
+
+In comparison, the OLS estimate is smaller than that obtained from the
+two-stage proximal regression procedure.
+
+``` r
+## lm(Y~D+W+Z+X)
 OLS <- lm(as.formula(paste("Y~RHC+",W,"+",Z,"+",X)), data=RHC_data_reform)
 round(summary(OLS)$coefficients[1:5,],3)
 ```
@@ -202,7 +235,11 @@ moment.h <- function(data,theta.h){
 Although these specifications can be changed, we keep them simple for
 demonstration purposes.
 
-The ATE is identified by $\beta = E [ h(D=1,W,X) -h(D=0,W,X) ]$.
+The ATE is identified by
+
+$$
+\beta = E [ h(D=1,W,X) -h(D=0,W,X) ] 
+$$
 
 ### Estimation of the ATE using the outcome confounding bridge function
 
@@ -249,10 +286,10 @@ Moment.Equation <-                ## Find the solutions of the moment equation
   optim(par=as.vector(c(IVReg$coefficients[2],IVReg$coefficients)),
         fn=function(theta){sum.extended.moment(data=RHC_data_reform,theta)})
 
-Moment.Equation$par[1]           ## ATE 
+round(Moment.Equation$par[1],3)           ## ATE 
 ```
 
-    ## [1] -1.993141
+    ## [1] -1.993
 
 ``` r
 round(cbind(Moment.Equation$par[1+1:5],
@@ -319,7 +356,8 @@ round(RESULT,3)
     ## 95% CI LB    -3.001 -2.982
     ## 95% CI UB    -0.985 -1.004
 
-The result is similar to that using `ivreg`.
+The result is similar to that using `ivreg` because $h$ is linear in
+$D$.
 
 ## Reference
 

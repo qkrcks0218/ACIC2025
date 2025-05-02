@@ -36,6 +36,7 @@ X_ls <- X_ls[! X_ls %in% c(D_ls,Z_ls,W_ls)]
 nX <- length(X_ls)
 
 RHC_data_reform <- RHC[,c("Y",D_ls,W_ls,Z_ls,X_ls)]  ## Only use relevant variables
+round(RHC_data_reform[1:10,1:10],3)
 ```
 
 ### Proximal 2-stage regression procedure
@@ -69,7 +70,7 @@ W <- paste0(W_ls,collapse ="+")
 X <- paste0(X_ls,collapse ="+")
 
 ## 1st stage
-W.fit <- lm(as.formula(paste("cbind(ph1,hema1)~RHC+",paste0(Z,"+",X,collapse = "+"))),
+W.fit <- lm(as.formula(paste("cbind(ph1,hema1)~RHC+",Z,"+",X)),
             data=RHC_data_reform)
 RHC_data_reform_WfitAdd <- RHC_data_reform
 RHC_data_reform_WfitAdd$W.fit <- predict(W.fit) 
@@ -84,15 +85,28 @@ Unfortunately, the reported standard error (SE) is typically smaller than the tr
 In fact, a one-line implementation is possible using the `ivreg::ivreg` function, which also provides a valid SE.
 
 ```{r IVREG}
-IVReg <- ivreg::ivreg(as.formula(paste("Y~RHC+ph1+hema1+",X,"|",
-                                       paste0(Z,"+RHC+",X,collapse = "+"))),
+## ivreg(Y~D+W+X|D+Z+X,data)
+IVReg <- ivreg::ivreg(as.formula(paste("Y~RHC+ph1+hema1+",X,"|","RHC+",Z,"+",X)),
                       data=RHC_data_reform)
 round(summary(IVReg)$coefficients[1:5,],3)
 ```
 
-The effect estimate of -1.99 is statistically significant at the 5% level, indicating that RHC reduces survival time. In comparison, the OLS estimate is smaller than that obtained from the two-stage proximal regression procedure.
+Another one-line implementation is available using the `gmm::gmm` function:
+
+```{r GMM}
+## gmm(Y~D+W+X,~D+Z+X,data)
+GMM <- gmm::gmm(as.formula(paste("Y~RHC+ph1+hema1+",X)),
+                  as.formula(paste("~RHC+",Z,"+",X)),
+                      data=RHC_data_reform)
+round(summary(GMM)$coefficients[1:5,],3)
+```
+
+The effect estimate of -1.99 is statistically significant at the 5% level, indicating that RHC reduces survival time. 
+
+In comparison, the OLS estimate is smaller than that obtained from the two-stage proximal regression procedure.
 
 ```{r ols}
+## lm(Y~D+W+Z+X)
 OLS <- lm(as.formula(paste("Y~RHC+",W,"+",Z,"+",X)), data=RHC_data_reform)
 round(summary(OLS)$coefficients[1:5,],3)
 ```
@@ -151,7 +165,11 @@ moment.h <- function(data,theta.h){
 
 Although these specifications can be changed, we keep them simple for demonstration purposes.
 
-The ATE is identified by $\beta = E [ h(D=1,W,X) -h(D=0,W,X) ]$.
+The ATE is identified by 
+
+$$
+\beta = E [ h(D=1,W,X) -h(D=0,W,X) ] 
+$$
 
 ### Estimation of the ATE using the outcome confounding bridge function
 
@@ -196,7 +214,7 @@ Moment.Equation <-                ## Find the solutions of the moment equation
   optim(par=as.vector(c(IVReg$coefficients[2],IVReg$coefficients)),
         fn=function(theta){sum.extended.moment(data=RHC_data_reform,theta)})
 
-Moment.Equation$par[1]           ## ATE 
+round(Moment.Equation$par[1],3)           ## ATE 
 
 round(cbind(Moment.Equation$par[1+1:5],
             IVReg$coefficients[1:5]),3)   ## (ATE,coef,RHC,ph1,hema1,age)
@@ -245,7 +263,7 @@ round(RESULT,3)
 
 ```
 
-The result is similar to that using `ivreg`.
+The result is similar to that using `ivreg` because $h$ is linear in $D$.
 
 ## Reference
 
