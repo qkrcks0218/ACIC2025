@@ -1,15 +1,13 @@
 ACIC2025 Short Course: Proximal Causal Inference
 ================
-Chan Park
-2025-05
 
 
 
 
 
 This document is part of the ACIC2025 short course and demonstrates the
-identification and estimation of the average treatment effect using
-proximal causal inference.
+proximal causal inference framework, focusing on identification and
+estimation of the average treatment effect.
 
 ## Proximal Identification and Estimation of the Average Treatment Effect (ATE)
 
