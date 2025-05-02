@@ -327,7 +327,7 @@ Tchetgen Tchetgen et al. (2024) An Introduction to Proximal Causal
 Inference. *Statistical Science*.
 
 Liu, Park, Li, Tchetgen Tchetgen (2024). Regression-Based Proximal
-Causal Inference. *Am J Epi*.
+Causal Inference. *American Journal of Epidemiology*.
 
 Stefanski, Boos (2002). The Calculus of M-Estimation. *The American
 Statistician*.

@@ -251,6 +251,6 @@ The result is similar to that using `ivreg`.
 
 Tchetgen Tchetgen et al. (2024) An Introduction to Proximal Causal Inference. _Statistical Science_.
 
-Liu, Park, Li, Tchetgen Tchetgen (2024). Regression-Based Proximal Causal Inference. _Am J Epi_.
+Liu, Park, Li, Tchetgen Tchetgen (2024). Regression-Based Proximal Causal Inference. _American Journal of Epidemiology_.
 
 Stefanski, Boos (2002). The Calculus of M-Estimation. _The American Statistician_.
