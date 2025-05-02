@@ -288,14 +288,14 @@ Moment.Equation <-                ## Find the solutions of the moment equation
   optim(par=as.vector(c(IVReg$coefficients[2],IVReg$coefficients)),
         fn=function(theta){sum.extended.moment(data=RHC_data_reform,theta)})
 
-round(Moment.Equation$par[1],3)           ## ATE 
+round(Moment.Equation$par[1],3)           ## β
 ```
 
     ## [1] -1.993
 
 ``` r
 round(cbind(Moment.Equation$par[1+1:5],
-            IVReg$coefficients[1:5]),3)   ## (ATE,coef,RHC,ph1,hema1,age)
+            IVReg$coefficients[1:5]),3)   ## θ
 ```
 
     ##                [,1]    [,2]
