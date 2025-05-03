@@ -104,12 +104,14 @@ W <- paste0(W_ls,collapse ="+")
 X <- paste0(X_ls,collapse ="+")
 
 ## 1st stage
+# lm(W~D+Z+X)
 W.fit <- lm(as.formula(paste("cbind(ph1,hema1)~RHC+",Z,"+",X)),
             data=RHC_data_reform)
 RHC_data_reform_WfitAdd <- RHC_data_reform
 RHC_data_reform_WfitAdd$W.fit <- predict(W.fit) 
 
 ## 2st stage
+# lm(Y~D+W.hat+X)
 Y.fit <- lm(as.formula(paste("Y~RHC+W.fit+",X)), data=RHC_data_reform_WfitAdd)
 
 round(summary(Y.fit)$coefficients[1:5,],3)
@@ -241,6 +243,8 @@ $$
 \beta = E [ h(D=1,W,X) -h(D=0,W,X) ] 
 $$
 
+Note that, under the linear $h$, we have $\beta = \theta_D$.
+
 ### Estimation of the ATE using the outcome confounding bridge function
 
 We consider a moment function $\Psi(O,\beta,\theta)$:
@@ -254,8 +258,8 @@ $$
 Note that the solution to the population moment equation
 $E[\Psi(O,\beta,\theta)]=0$ will recover the ATE $(=\beta)$ and the
 outcome confounding bridge function parameters $(=\theta)$. Therefore,
-estimators of $\beta$ and $\theta$ can be constructed as a solution to
-the moment equation based on the observed data:
+estimators of $\beta$ and $\theta$ can be constructed as the solutions
+to the moment equation based on the observed data:
 
 $$
 (\widehat{\beta},\widehat{\theta})
@@ -347,12 +351,12 @@ RESULT <- cbind(c(Moment.Equation$par[1], sqrt(Avar[1,1]),
                   summary(IVReg)$coefficients[2,1]-1.96*summary(IVReg)$coefficients[2,2],
                   summary(IVReg)$coefficients[2,1]+1.96*summary(IVReg)$coefficients[2,2]))
 
-colnames(RESULT) <- c("Bridge Ft","2SLS")
+colnames(RESULT) <- c("Bridge Ft","ivreg")
 rownames(RESULT)  <- c("Est","SE","95% CI LB","95% CI UB")
 round(RESULT,3)
 ```
 
-    ##           Bridge Ft   2SLS
+    ##           Bridge Ft  ivreg
     ## Est          -1.993 -1.993
     ## SE            0.514  0.505
     ## 95% CI LB    -3.001 -2.982
