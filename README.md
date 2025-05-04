@@ -105,16 +105,16 @@ X <- paste0(X_ls,collapse ="+")
 
 ## 1st stage
 # lm(W~D+Z+X)
-W.fit <- lm(as.formula(paste("cbind(ph1,hema1)~RHC+",Z,"+",X)),
+P2S.W.fit <- lm(as.formula(paste("cbind(ph1,hema1)~RHC+",Z,"+",X)),
             data=RHC_data_reform)
 RHC_data_reform_WfitAdd <- RHC_data_reform
-RHC_data_reform_WfitAdd$W.fit <- predict(W.fit) 
+RHC_data_reform_WfitAdd$W.fit <- predict(P2S.W.fit) 
 
-## 2st stage
+## 2nd stage
 # lm(Y~D+W.hat+X)
-Y.fit <- lm(as.formula(paste("Y~RHC+W.fit+",X)), data=RHC_data_reform_WfitAdd)
+P2S.Y.fit <- lm(as.formula(paste("Y~RHC+W.fit+",X)), data=RHC_data_reform_WfitAdd)
 
-round(summary(Y.fit)$coefficients[1:5,],3)
+round(summary(P2S.Y.fit)$coefficients[1:5,],3)
 ```
 
     ##             Estimate Std. Error t value Pr(>|t|)
@@ -151,8 +151,8 @@ function:
 ``` r
 ## gmm(Y~D+W+X,~D+Z+X,data)
 GMM <- gmm::gmm(as.formula(paste("Y~RHC+ph1+hema1+",X)),
-                  as.formula(paste("~RHC+",Z,"+",X)),
-                      data=RHC_data_reform)
+                as.formula(paste("~RHC+",Z,"+",X)),
+                data=RHC_data_reform)
 round(summary(GMM)$coefficients[1:5,],3)
 ```
 
@@ -198,7 +198,9 @@ g_h(D,Z,X) ( Y - h(D,W,X) )
 \end{aligned}
 $$
 
-We will consider a linear $h$ and a linear $g_h$:
+We will consider a linear $h$ and a linear $g_h$. Although these
+specifications can be changed, we keep them simple for demonstration
+purposes.
 
 $$
 \begin{aligned}
@@ -234,16 +236,23 @@ moment.h <- function(data,theta.h){
 }
 ```
 
-Although these specifications can be changed, we keep them simple for
-demonstration purposes.
-
 The ATE is identified by
 
 $$
-\beta = E [ h(D=1,W,X) -h(D=0,W,X) ] 
+\begin{aligned}
+\beta & = E [ h(D=1,W,X) -h(D=0,W,X) ] 
+\\
+& = E [ ( \theta_0 + \theta_D  + \theta_W^\intercal W + \theta_X^\intercal X )
+-
+( \theta_0 + \theta_W^\intercal W + \theta_X^\intercal X )  ] 
+\\
+&
+=
+\theta_D
+\end{aligned}
 $$
 
-Note that, under the linear $h$, we have $\beta = \theta_D$.
+Note that, under the linear $h$, we have $\beta = \theta_D$
 
 ### Estimation of the ATE using the outcome confounding bridge function
 
@@ -298,16 +307,27 @@ round(Moment.Equation$par[1],3)           ## β
     ## [1] -1.993
 
 ``` r
-round(cbind(Moment.Equation$par[1+1:5],
-            IVReg$coefficients[1:5]),3)   ## θ
+Theta <- cbind(P2S.Y.fit$coefficients,
+               IVReg$coefficients[1:5],
+               GMM$coefficients[1:5],
+               Moment.Equation$par[1+1:5])
 ```
 
-    ##                [,1]    [,2]
-    ## (Intercept) 156.240 156.240
-    ## RHC          -1.993  -1.993
-    ## ph1         -18.415 -18.415
-    ## hema1        -1.159  -1.159
-    ## age           0.053   0.053
+    ## Warning in cbind(P2S.Y.fit$coefficients, IVReg$coefficients[1:5],
+    ## GMM$coefficients[1:5], : number of rows of result is not a multiple of vector
+    ## length (arg 2)
+
+``` r
+colnames(Theta) <- c("P2S","ivreg","gmm","Bridge Ft")
+round(Theta[1:5,],3)   ## θ
+```
+
+    ##                 P2S   ivreg     gmm Bridge Ft
+    ## (Intercept) 156.240 156.240 156.240   156.240
+    ## RHC          -1.993  -1.993  -1.993    -1.993
+    ## W.fitph1    -18.415 -18.415 -18.415   -18.415
+    ## W.fithema1   -1.159  -1.159  -1.159    -1.159
+    ## age           0.053   0.053   0.053     0.053
 
 Since $h(D=1,W,X)-h(D=0,W,X) = \theta_D$ under the linear $h$, we find
 the coefficients of RHC is equal to the ATE estimate.
@@ -344,26 +364,47 @@ Avar <- AVAR(RHC_data_reform,
              Moment.Equation$par,
              extended.moment)
 
-RESULT <- cbind(c(Moment.Equation$par[1], sqrt(Avar[1,1]), 
-                  Moment.Equation$par[1]-1.96*sqrt(Avar[1,1]),
-                  Moment.Equation$par[1]+1.96*sqrt(Avar[1,1])),
-                c(summary(IVReg)$coefficients[2,1],summary(IVReg)$coefficients[2,2],
-                  summary(IVReg)$coefficients[2,1]-1.96*summary(IVReg)$coefficients[2,2],
-                  summary(IVReg)$coefficients[2,1]+1.96*summary(IVReg)$coefficients[2,2]))
+RESULT <- cbind(
+  
+  c(summary(OLS)$coefficients[2,1],
+    summary(OLS)$coefficients[2,2],
+    summary(OLS)$coefficients[2,1]-1.96*summary(OLS)$coefficients[2,2],
+    summary(OLS)$coefficients[2,1]+1.96*summary(OLS)$coefficients[2,2]),
+  
+  c(summary(P2S.Y.fit)$coefficients[2,1],
+    summary(P2S.Y.fit)$coefficients[2,2], ## Invalid
+    summary(P2S.Y.fit)$coefficients[2,1]-1.96*summary(P2S.Y.fit)$coefficients[2,2],  ## Invalid
+    summary(P2S.Y.fit)$coefficients[2,1]+1.96*summary(P2S.Y.fit)$coefficients[2,2]), ## Invalid
+  
+  c(summary(IVReg)$coefficients[2,1],
+    summary(IVReg)$coefficients[2,2],
+    summary(IVReg)$coefficients[2,1]-1.96*summary(IVReg)$coefficients[2,2],
+    summary(IVReg)$coefficients[2,1]+1.96*summary(IVReg)$coefficients[2,2]),
+  
+  c(summary(GMM)$coefficients[2,1],
+    summary(GMM)$coefficients[2,2],
+    summary(GMM)$coefficients[2,1]-1.96*summary(GMM)$coefficients[2,2],
+    summary(GMM)$coefficients[2,1]+1.96*summary(GMM)$coefficients[2,2]),
+  
+  c(Moment.Equation$par[1], 
+    sqrt(Avar[1,1]), 
+    Moment.Equation$par[1]-1.96*sqrt(Avar[1,1]),
+    Moment.Equation$par[1]+1.96*sqrt(Avar[1,1])))
 
-colnames(RESULT) <- c("Bridge Ft","ivreg")
+colnames(RESULT) <- c("OLS","P2S","ivreg","gmm","Bridge Ft")
 rownames(RESULT)  <- c("Est","SE","95% CI LB","95% CI UB")
 round(RESULT,3)
 ```
 
-    ##           Bridge Ft  ivreg
-    ## Est          -1.993 -1.993
-    ## SE            0.514  0.505
-    ## 95% CI LB    -3.001 -2.982
-    ## 95% CI UB    -0.985 -1.004
+    ##              OLS    P2S  ivreg    gmm Bridge Ft
+    ## Est       -1.327 -1.993 -1.993 -1.993    -1.993
+    ## SE         0.283  0.378  0.505  0.503     0.514
+    ## 95% CI LB -1.882 -2.734 -2.982 -2.979    -3.001
+    ## 95% CI UB -0.772 -1.252 -1.004 -1.007    -0.985
 
-The result is similar to that using `ivreg` because $h$ is linear in
-$D$.
+The result from the bridge function approach is similar to that using
+`ivreg` or `gmm` because $h$ is linear in $D$. Note that the SE of the
+proximal 2-stage regression procedure is invalid.
 
 ## Reference
 
