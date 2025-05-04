@@ -242,13 +242,9 @@ $$
 \begin{aligned}
 \beta & = E [ h(D=1,W,X) -h(D=0,W,X) ] 
 \\
-& = E [ ( \theta_0 + \theta_D  + \theta_W^\intercal W + \theta_X^\intercal X )
--
-( \theta_0 + \theta_W^\intercal W + \theta_X^\intercal X )  ] 
+& = E [ ( \theta_0 + \theta_D  + \theta_W^\intercal W + \theta_X^\intercal X ) - ( \theta_0 + \theta_W^\intercal W + \theta_X^\intercal X )  ] 
 \\
-&
-=
-\theta_D
+& = \theta_D
 \end{aligned}
 $$
 
