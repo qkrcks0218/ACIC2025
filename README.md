@@ -74,9 +74,9 @@ We consider the following linear models:
 
 $$
 \begin{aligned}
-E(Y|D,Z,U) & = &  \beta_0 & +  \beta_D D & +  \beta_U U
+E(Y|D,Z,U) & = &  \beta_0 & +  \beta_D D & +  \beta_X X & + \beta_U U
 \\
-E(W|D,Z,U) & = &  \gamma_0 &  &  +  \gamma_U U
+E(W|D,Z,U) & = &  \gamma_0 &  & +  \gamma_X X &  + \gamma_U U
 \end{aligned}
 $$
 
