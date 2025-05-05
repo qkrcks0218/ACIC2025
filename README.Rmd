@@ -225,7 +225,7 @@ Moment.Equation <-                ## Find the solutions of the moment equation
 
 round(Moment.Equation$par[1],3)           ## β
 
-Theta <- cbind(P2S.Y.fit$coefficients,
+Theta <- cbind(P2S.Y.fit$coefficients[1:5],
                IVReg$coefficients[1:5],
                GMM$coefficients[1:5],
                Moment.Equation$par[1+1:5])

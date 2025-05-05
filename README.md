@@ -303,17 +303,10 @@ round(Moment.Equation$par[1],3)           ## β
     ## [1] -1.993
 
 ``` r
-Theta <- cbind(P2S.Y.fit$coefficients,
+Theta <- cbind(P2S.Y.fit$coefficients[1:5],
                IVReg$coefficients[1:5],
                GMM$coefficients[1:5],
                Moment.Equation$par[1+1:5])
-```
-
-    ## Warning in cbind(P2S.Y.fit$coefficients, IVReg$coefficients[1:5],
-    ## GMM$coefficients[1:5], : number of rows of result is not a multiple of vector
-    ## length (arg 2)
-
-``` r
 colnames(Theta) <- c("P2S","ivreg","gmm","Bridge Ft")
 round(Theta[1:5,],3)   ## θ
 ```
