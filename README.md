@@ -106,7 +106,7 @@ X <- paste0(X_ls,collapse ="+")
 ## 1st stage
 # lm(W~D+Z+X)
 P2S.W.fit <- lm(as.formula(paste("cbind(ph1,hema1)~RHC+",Z,"+",X)),
-            data=RHC_data_reform)
+                data=RHC_data_reform)
 RHC_data_reform_WfitAdd <- RHC_data_reform
 RHC_data_reform_WfitAdd$W.fit <- predict(P2S.W.fit) 
 
@@ -296,8 +296,43 @@ sum.extended.moment <-            ## (average of Psi over the observations)^2
 Moment.Equation <-                ## Find the solutions of the moment equation
   optim(par=as.vector(c(IVReg$coefficients[2],IVReg$coefficients)),
         fn=function(theta){sum.extended.moment(data=RHC_data_reform,theta)})
+```
 
-round(Moment.Equation$par[1],3)           ## β
+Sanity check:
+
+``` r
+beta.est <- Moment.Equation$par[1]
+theta.est <- Moment.Equation$par[-1]
+
+RHC_data_reform_D1 <- RHC_data_reform_D0 <- RHC_data_reform
+RHC_data_reform_D1$RHC <- 1
+RHC_data_reform_D0$RHC <- 0
+
+## Checking aver[ h(1,W)-h(0,W)-beta ] = 0
+round(mean( h(RHC_data_reform_D1,theta.est) - h(RHC_data_reform_D0,theta.est) - beta.est ),6)
+```
+
+    ## [1] 0
+
+``` r
+## Checking aver[ g_h(D,Z,X)*{Y-h(D,W,X)} ] = 0
+round(c( mean( RHC_data_reform$Y - h(RHC_data_reform,theta.est) ), 
+         mean( RHC_data_reform$RHC*(RHC_data_reform$Y - h(RHC_data_reform,theta.est)) ),
+         mean( RHC_data_reform$pafi1*(RHC_data_reform$Y - h(RHC_data_reform,theta.est)) ),
+         mean( RHC_data_reform$paco21*(RHC_data_reform$Y - h(RHC_data_reform,theta.est)) ),
+         mean( RHC_data_reform$age*(RHC_data_reform$Y - h(RHC_data_reform,theta.est)) )
+),6)
+```
+
+    ## [1] 0 0 0 0 0
+
+The estimates appears to solve the moment equation.
+
+``` r
+beta.est <- Moment.Equation$par[1]
+theta.est <- Moment.Equation$par[-1]
+
+round(beta.est,3)           ## β
 ```
 
     ## [1] -1.993
@@ -306,17 +341,17 @@ round(Moment.Equation$par[1],3)           ## β
 Theta <- cbind(P2S.Y.fit$coefficients[1:5],
                IVReg$coefficients[1:5],
                GMM$coefficients[1:5],
-               Moment.Equation$par[1+1:5])
+               theta.est[1+1:5])
 colnames(Theta) <- c("P2S","ivreg","gmm","Bridge Ft")
 round(Theta[1:5,],3)   ## θ
 ```
 
     ##                 P2S   ivreg     gmm Bridge Ft
-    ## (Intercept) 156.240 156.240 156.240   156.240
-    ## RHC          -1.993  -1.993  -1.993    -1.993
-    ## W.fitph1    -18.415 -18.415 -18.415   -18.415
-    ## W.fithema1   -1.159  -1.159  -1.159    -1.159
-    ## age           0.053   0.053   0.053     0.053
+    ## (Intercept) 156.240 156.240 156.240    -1.993
+    ## RHC          -1.993  -1.993  -1.993   -18.415
+    ## W.fitph1    -18.415 -18.415 -18.415    -1.159
+    ## W.fithema1   -1.159  -1.159  -1.159     0.053
+    ## age           0.053   0.053   0.053     0.044
 
 Since $h(D=1,W,X)-h(D=0,W,X) = \theta_D$ under the linear $h$, we find
 the coefficients of RHC is equal to the ATE estimate.
