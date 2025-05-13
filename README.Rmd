@@ -258,7 +258,7 @@ round(beta.est,3)           ## β
 Theta <- cbind(P2S.Y.fit$coefficients[1:5],
                IVReg$coefficients[1:5],
                GMM$coefficients[1:5],
-               theta.est[1+1:5])
+               theta.est[1:5])
 colnames(Theta) <- c("P2S","ivreg","gmm","Bridge Ft")
 round(Theta[1:5,],3)   ## θ
 ```

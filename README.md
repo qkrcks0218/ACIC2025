@@ -341,17 +341,17 @@ round(beta.est,3)           ## β
 Theta <- cbind(P2S.Y.fit$coefficients[1:5],
                IVReg$coefficients[1:5],
                GMM$coefficients[1:5],
-               theta.est[1+1:5])
+               theta.est[1:5])
 colnames(Theta) <- c("P2S","ivreg","gmm","Bridge Ft")
 round(Theta[1:5,],3)   ## θ
 ```
 
     ##                 P2S   ivreg     gmm Bridge Ft
-    ## (Intercept) 156.240 156.240 156.240    -1.993
-    ## RHC          -1.993  -1.993  -1.993   -18.415
-    ## W.fitph1    -18.415 -18.415 -18.415    -1.159
-    ## W.fithema1   -1.159  -1.159  -1.159     0.053
-    ## age           0.053   0.053   0.053     0.044
+    ## (Intercept) 156.240 156.240 156.240   156.240
+    ## RHC          -1.993  -1.993  -1.993    -1.993
+    ## W.fitph1    -18.415 -18.415 -18.415   -18.415
+    ## W.fithema1   -1.159  -1.159  -1.159    -1.159
+    ## age           0.053   0.053   0.053     0.053
 
 Since $h(D=1,W,X)-h(D=0,W,X) = \theta_D$ under the linear $h$, we find
 the coefficients of RHC is equal to the ATE estimate.
